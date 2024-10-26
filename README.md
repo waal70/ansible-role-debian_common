@@ -3,7 +3,7 @@ Common
 
 This is the role that sets some defaults. You might say, a bootstrap role.
 
-The role will check the basic requirements. It will then determine the correct
+The role will check basic requirements. It will then determine the correct
 course of action (mainly, "proper" Debian or Raspberry Pi debian)
 
 This role should be safe to run on all machines, always
