@@ -10,7 +10,16 @@
     skeleton: /etc/skel
     append: true
 
-- name: Set the primary key for the unprivileged user, removing any others
+- name: Check the primary key for the unprivileged user
+  ansible.posix.authorized_key:
+    user: "{{ interactive_user }}"
+    key: "{{ lookup('file', '../home/ssh-keys/{{ interactive_user }}/{{ interactive_user }}-yubi-1.pub') }}"
+    state: present
+    exclusive: false
+  register: setkey
+
+- name: Re-set the primary key as exclusive, if we found that the key was not present yet # noqa: no-handler
+  when: setkey.changed
   ansible.posix.authorized_key:
     user: "{{ interactive_user }}"
     key: "{{ lookup('file', '../home/ssh-keys/{{ interactive_user }}/{{ interactive_user }}-yubi-1.pub') }}"
@@ -22,6 +31,7 @@
     user: "{{ interactive_user }}"
     key: "{{ lookup('file', '../home/ssh-keys/{{ interactive_user }}/{{ interactive_user }}-yubi-2.pub') }}"
     state: present
+    exclusive: false
 
 - name: Install required package to become unprivileged users
   ansible.builtin.apt:
