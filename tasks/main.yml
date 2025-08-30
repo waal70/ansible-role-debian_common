@@ -1,5 +1,8 @@
 ---
 # file: common/tasks/main.yml
+- name: Ensure there is a default locale set
+  ansible.builtin.import_tasks: set-locale.yml
+
 - name: Ensure required packages are present on systems
   ansible.builtin.import_tasks: prereq-packages.yml
 

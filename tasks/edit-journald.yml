@@ -10,6 +10,8 @@
     - { regexp: "^#?ForwardToSyslog", line: ForwardToSyslog=no }
     - { regexp: "^#?SystemMaxUse", line: SystemMaxUse=50M }
   notify: Restart systemd-journald
+  vars:
+    ansible_remote_tmp: /tmp # Prevent warnings for auto-created tmp dir
 
 # A succesful vacuum does impact log size, but is not considered a change
 - name: Vacuum journalctl before

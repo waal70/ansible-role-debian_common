@@ -9,8 +9,6 @@
 #  Args       : none
 ###############################################################
 
-clear
-
 printf "\nSystem managed by Ansible"
 
 printf "\nWelcome to "; lsb_release -ds
