@@ -8,6 +8,8 @@
     path: /etc/hosts
     regexp: 127\.0\.1\.1
     replace: "{{ ansible_host }} {{ inventory_hostname }}"
+  vars:
+    ansible_remote_tmp: /tmp # Prevent warnings for auto-created tmp dir
 
 - name: Ensure at least one full hostname entry is present
   ansible.builtin.lineinfile:
