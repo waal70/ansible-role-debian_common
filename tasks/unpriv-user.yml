@@ -13,7 +13,7 @@
 - name: Check the primary key for the unprivileged user
   ansible.posix.authorized_key:
     user: "{{ interactive_user }}"
-    key: "{{ lookup('file', '../home/ssh-keys/{{ interactive_user }}/{{ interactive_user }}-yubi-1.pub') }}"
+    key: "{{ lookup('file', '../home/ssh-keys/' ~ interactive_user ~ '/' ~ interactive_user ~ '-yubi-1.pub') }}"
     state: present
     exclusive: false
   register: setkey
@@ -22,14 +22,14 @@
   when: setkey.changed
   ansible.posix.authorized_key:
     user: "{{ interactive_user }}"
-    key: "{{ lookup('file', '../home/ssh-keys/{{ interactive_user }}/{{ interactive_user }}-yubi-1.pub') }}"
+    key: "{{ lookup('file', '../home/ssh-keys/' ~ interactive_user ~ '/' ~ interactive_user ~ '-yubi-1.pub') }}"
     state: present
     exclusive: true
 
 - name: Set the secondary key for the unprivileged user
   ansible.posix.authorized_key:
     user: "{{ interactive_user }}"
-    key: "{{ lookup('file', '../home/ssh-keys/{{ interactive_user }}/{{ interactive_user }}-yubi-2.pub') }}"
+    key: "{{ lookup('file', '../home/ssh-keys/' ~ interactive_user ~ '/' ~ interactive_user ~ '-yubi-2.pub') }}"
     state: present
     exclusive: false
 

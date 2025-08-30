@@ -27,7 +27,7 @@
     - name: Move old tmp out of the way
       ansible.builtin.command:
         cmd: mv /tmp /old_tmp
-      failed_when: "{{ sttmp.stat.exists }}"
+      failed_when: sttmp.stat.exists
       changed_when: true
 
     - name: Make the new file a permanent mount in fstab
@@ -41,7 +41,7 @@
     - name: Move the old stuff back into the new mountpoint
       ansible.builtin.command:
         cmd: mv /old_tmp/* /tmp/
-      failed_when: "{{ sttmp.stat.exists }}"
+      failed_when: sttmp.stat.exists
       changed_when: true
 
     - name: Ensure no more /old_tmp
