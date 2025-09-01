@@ -5,10 +5,12 @@
     question: locales/default_environment_locale
     value: en_US.UTF-8
     vtype: select
+  notify: Reconfigure locales
 
-- name: Set to generate locales
+- name: Generate required locales
   ansible.builtin.debconf:
     name: locales
     question: locales/locales_to_be_generated
-    value: en_US.UTF-8 UTF-8
+    value: en_US.UTF-8 UTF-8, nl_NL.UTF-8 UTF-8, en_GB.UTF-8 UTF-8
     vtype: multiselect
+  notify: Reconfigure locales

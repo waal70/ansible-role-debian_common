@@ -18,3 +18,10 @@
   ansible.builtin.systemd_service:
     name: sshd
     state: restarted
+
+- name: Reconfigure locales
+  ansible.builtin.command:
+    cmd: "dpkg-reconfigure locales"
+  environment:
+    DEBIAN_FRONTEND: noninteractive
+  changed_when: true

@@ -17,3 +17,5 @@
     regexp: "{{ ansible_host }}.*{{ inventory_hostname }}"
     line: "{{ ansible_host }} {{ inventory_hostname }}"
     state: present
+  vars:
+    ansible_remote_tmp: /tmp # Prevent warnings for auto-created tmp dir
