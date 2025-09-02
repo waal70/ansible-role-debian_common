@@ -23,6 +23,18 @@ else
     productname="Unknown"
 fi
 
+if [ -f /sys/devices/virtual/dmi/id/bios_vendor ]; then
+    bios=$(cat /sys/devices/virtual/dmi/id/bios_vendor | awk '{print $1}')
+else
+    bios="Unknown"
+fi
+
+if [ "$bios" == "coreboot" ]; then
+    libreboot="installed"
+else
+    libreboot="not present"
+fi
+
 if [ -f /sys/devices/virtual/dmi/id/board_vendor ]; then
     manufacturer=$(cat /sys/devices/virtual/dmi/id/board_vendor | awk '{print $1}')
 elif [[ "$systemtype" == "Raspberry" ]]; then
@@ -33,5 +45,5 @@ else
     manufacturer="Unknown"
 fi
 
-printf '{"systemtype":"%s","manufacturer":"%s","productname":"%s","hostname":"%s","operating_system":"%s","architecture":"%s","processor_name":"%s","memory":"%s","system_main_ip":"%s"}'\
- "$systemtype" "$manufacturer" "$productname" "$hostname" "$operating_system" "$architecture" "$processor_model" "$memory" "$system_main_ip"
+printf '{"libreboot":"%s","systemtype":"%s","manufacturer":"%s","productname":"%s","hostname":"%s","operating_system":"%s","architecture":"%s","processor_name":"%s","memory":"%s","system_main_ip":"%s"}'\
+ "$libreboot" "$systemtype" "$manufacturer" "$productname" "$hostname" "$operating_system" "$architecture" "$processor_model" "$memory" "$system_main_ip"

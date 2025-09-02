@@ -1,0 +1,35 @@
+---
+- name: Fix GRUB nouveau errors and reboot
+  ansible.builtin.lineinfile:
+    path: /etc/default/grub
+    regexp: '^GRUB_CMDLINE_LINUX_DEFAULT=".*quiet'
+# line: 'GRUB_CMDLINE_LINUX_DEFAULT="quiet"'
+    line: 'GRUB_CMDLINE_LINUX_DEFAULT="quiet nouveau.modeset=0"'
+  register: grubfix
+  when: "'Thinkpad' in ansible_local['cpu_info']['productname']"
+
+- name: Update grub # noqa: no-handler
+  ansible.builtin.command: update-grub
+  when: grubfix.changed
+  changed_when: grubfix.changed
+
+- name: Reboot after fixing GRUB # noqa: no-handler
+  ansible.builtin.reboot:
+  when: grubfix.changed
+  changed_when: grubfix.changed
+
+- name: Install additional firmware
+  ansible.builtin.apt:
+    pkg:
+      - firmware-realtek
+      - firmware-misc-nonfree
+      - firmware-iwlwifi
+      - firmware-sof-signed
+    state: present
+  when: "'proxmox_servers' not in group_names"
+
+- name: Install intel-microcode on Intel systems, but only if this is a non-libreboot system
+  ansible.builtin.apt:
+    name: intel-microcode
+    state: present
+  when: ansible_facts['ansible_processor'][0] == 'Intel' and 'installed' not in ansible_local['cpu_info']['libreboot']

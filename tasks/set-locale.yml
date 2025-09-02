@@ -1,4 +1,12 @@
 ---
+- name: Ensure the proper locales are present and generated
+  community.general.locale_gen:
+    name:
+      - "nl_NL.UTF-8"
+      - "en_US.UTF-8"
+      - "en_GB.UTF-8"
+    state: present
+
 - name: Set default locale to en_US.UTF-8
   ansible.builtin.debconf:
     name: locales
@@ -7,10 +15,11 @@
     vtype: select
   notify: Reconfigure locales
 
-- name: Generate required locales
-  ansible.builtin.debconf:
-    name: locales
-    question: locales/locales_to_be_generated
-    value: en_US.UTF-8 UTF-8, nl_NL.UTF-8 UTF-8, en_GB.UTF-8 UTF-8
-    vtype: multiselect
-  notify: Reconfigure locales
+# Not needed when using community.general.locale_gen
+# - name: Generate required locales
+#  ansible.builtin.debconf:
+#    name: locales
+#    question: locales/locales_to_be_generated
+#    value: en_US.UTF-8 UTF-8, nl_NL.UTF-8 UTF-8, en_GB.UTF-8 UTF-8
+#    vtype: multiselect
+#  notify: Reconfigure locales
