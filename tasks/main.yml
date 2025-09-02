@@ -19,7 +19,7 @@
   when: "'Dell' in ansible_board_vendor or 'LENOVO' in ansible_board_vendor"
   block:
     - name: Import firmware tasks
-      ansible.builtin.import_tasks: additonal-firmware.yml
+      ansible.builtin.import_tasks: additional-firmware.yml
 
 - name: Import color-shell tasks for the common-role
   ansible.builtin.import_tasks: color-shell.yml
