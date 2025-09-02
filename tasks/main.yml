@@ -15,6 +15,10 @@
 - name: Import custom fact setting
   ansible.builtin.import_tasks: custom-fact.yml
 
+- name: Display custom facts from /etc/ansible/facts.d
+  ansible.builtin.debug:
+    var: ansible_local['cpu_info']
+
 - name: Firmware block for x86_64 systems
   when: "'Dell' in ansible_board_vendor or 'LENOVO' in ansible_board_vendor"
   block:

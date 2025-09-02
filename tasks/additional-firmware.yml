@@ -6,7 +6,7 @@
 # line: 'GRUB_CMDLINE_LINUX_DEFAULT="quiet"'
     line: 'GRUB_CMDLINE_LINUX_DEFAULT="quiet nouveau.modeset=0"'
   register: grubfix
-  when: "'Thinkpad' in ansible_local['cpu_info']['productname']"
+  when: "'ThinkPad' in ansible_local['cpu_info']['productname']"
 
 - name: Update grub # noqa: no-handler
   ansible.builtin.command: update-grub
@@ -28,8 +28,20 @@
     state: present
   when: "'proxmox_servers' not in group_names"
 
-- name: Install intel-microcode on Intel systems, but only if this is a non-libreboot system
+- name: Inform user of the intention with the microcode package
+  ansible.builtin.debug:
+    msg: "This is an Intel system, but it is a libreboot system. Removing intel-microcode package."
+  when: "'GenuineIntel' in ansible_facts['processor'] and 'installed' in ansible_local['cpu_info']['libreboot']"
+
+- name: Remove intel-microcode on Intel libreboot systems
+  ansible.builtin.apt:
+    name: intel-microcode
+    state: absent
+    purge: true
+  when: "'GenuineIntel' in ansible_facts['processor'] and 'installed' in ansible_local['cpu_info']['libreboot']"
+
+- name: Install intel-microcode on Intel non-libreboot systems
   ansible.builtin.apt:
     name: intel-microcode
     state: present
-  when: ansible_facts['ansible_processor'][0] == 'Intel' and 'installed' not in ansible_local['cpu_info']['libreboot']
+  when: "'GenuineIntel' in ansible_facts['processor'] and 'installed' not in ansible_local['cpu_info']['libreboot']"
