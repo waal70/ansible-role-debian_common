@@ -33,12 +33,31 @@
     msg: "This is an Intel system, but it is a libreboot system. Removing intel-microcode package."
   when: "'GenuineIntel' in ansible_facts['processor'] and 'installed' in ansible_local['cpu_info']['libreboot']"
 
-- name: Remove intel-microcode on Intel libreboot systems
-  ansible.builtin.apt:
-    name: intel-microcode
-    state: absent
-    purge: true
+- name: Block for actions that need to be done when libreboot present
   when: "'GenuineIntel' in ansible_facts['processor'] and 'installed' in ansible_local['cpu_info']['libreboot']"
+  block:
+    - name: Remove intel-microcode on Intel libreboot systems
+      ansible.builtin.apt:
+        name: intel-microcode
+        state: absent
+        purge: true
+
+    - name: Blacklist mei_me module on libreboot systems
+      ansible.builtin.copy:
+        dest: /etc/modprobe.d/blacklist-mei.conf
+        content: |
+          # Disable Intel Management Engine Interface driver for libreboot systems
+          blacklist mei_me
+        owner: root
+        group: root
+        mode: '0644'
+      notify: Update initramfs
+
+    - name: Run depmod -ae as root
+      ansible.builtin.command: depmod -ae
+      become: true
+      changed_when: false
+# end block
 
 - name: Install intel-microcode on Intel non-libreboot systems
   ansible.builtin.apt:
