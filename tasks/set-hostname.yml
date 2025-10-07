@@ -19,3 +19,4 @@
     state: present
   vars:
     ansible_remote_tmp: /tmp # Prevent warnings for auto-created tmp dir
+  when: "'activedirectory' not in group_names"
