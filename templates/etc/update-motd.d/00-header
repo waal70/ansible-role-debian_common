@@ -1,0 +1,10 @@
+#!/bin/bash
+
+# motd inspired on https://github.com/NeonWizard/spookdev-motd
+
+source /etc/update-motd.d/colors.txt
+
+echo -e; toilet -d /etc/update-motd.d/ -f ivrit -W -F border --gay $(hostname)
+echo ""
+echo -e "${NC} System is running ${TEXT_COLOR}$(lsb_release -ds)${NC}, managed by ${TEXT_COLOR}Ansible"
+echo ""

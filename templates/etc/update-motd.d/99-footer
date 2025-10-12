@@ -1,0 +1,5 @@
+#!/bin/bash
+
+echo ""
+echo -e "${NC} UTC: ${TEXT_COLOR}$(date -u)${NC}, local: ${TEXT_COLOR}$(date)"
+echo ""

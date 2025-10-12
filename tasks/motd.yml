@@ -2,6 +2,31 @@
 - name: Prepare a custom motd, but do not affect 'proxmox_servers'
   when: "'proxmox_servers' not in group_names"
   block:
+    - name: Install large font for use in motd
+      ansible.builtin.apt:
+        name:
+          - toilet
+        state: present
+        cache_valid_time: 3600
+
+    - name: Check presence of ivrit.flf. If not present, nuke the motd.d directory
+      ansible.builtin.stat:
+        path: "/etc/update-motd.d/ivrit.flf"
+      register: fontpresence
+
+    - name: Delete motd when ivrit.flf not found
+      ansible.builtin.file:
+        state: absent
+        path: "/etc/update-motd.d/"
+      when: not fontpresence.stat.exists
+
+    - name: Recreate motd when ivrit.flf was not there
+      ansible.builtin.file:
+        state: directory
+        path: "/etc/update-motd.d/"
+        mode: "755"
+      when: not fontpresence.stat.exists
+
     - name: Set a custom motd for all Debian-based systems # noqa: deprecated-bare-vars
       ansible.builtin.template:
         src: "{{ item.src }}"

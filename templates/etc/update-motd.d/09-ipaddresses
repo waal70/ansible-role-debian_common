@@ -1,0 +1,14 @@
+#!/bin/bash
+
+###############################################################
+#  Script     : 09-ipaddresses
+#  Author     : Andre
+#  Date       : 16/07/2024
+#  Description: displays ipv4 and ipv6 addresses
+#  Args       : none
+###############################################################
+
+source /etc/update-motd.d/colors.txt
+
+echo -e " ${TITLE_COLOR}IPv4 addresses......:${NC} ${TEXT_COLOR}$(ip -h -br -c -4 a | awk '{ printf " %s:%s", $1, $3;}')"
+echo -e " ${TITLE_COLOR}IPv6 addresses......:${NC} ${TEXT_COLOR}$(ip -h -br -c -6 a | awk '{ printf " %s:%s", $1, $3;}')"
