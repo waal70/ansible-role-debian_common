@@ -8,7 +8,7 @@
   with_items:
     - { regexp: "^#?Storage", line: Storage=volatile }
     - { regexp: "^#?ForwardToSyslog", line: ForwardToSyslog=no }
-    - { regexp: "^#?SystemMaxUse", line: SystemMaxUse=50M }
+    - { regexp: "^#?SystemMaxUse", line: SystemMaxUse=100M }
   notify: Restart systemd-journald
   vars:
     ansible_remote_tmp: /tmp # Prevent warnings for auto-created tmp dir
