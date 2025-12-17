@@ -6,7 +6,22 @@ This is the role that sets some defaults. You might say, a bootstrap role.
 The role will check basic requirements. It will then determine the correct
 course of action (mainly, "proper" Debian or Raspberry Pi debian)
 
-This role should be safe to run on all machines, always
+This role should be safe to run on all machines, always.
+
+It will perform the following:
+
+* additional-firmware: perform the Thinkpad display driver fix. Install additional (vendor) firmware. Skips members of "proxmox_servers" group
+* color-shell: set default colors for interactive shell
+* custom-fact: deploy a small file that will retrieve some additional facts into ansible_facts
+* edit-journald: configure journaling options. Vacuums the journal.
+* motd: set a nice, colourful welcome message when logging in via interactive shell
+* prereq-packages: installs (Python) packages and updates apt cache
+* set-hostname: sets the hostname according to the configured value from ansible inventory
+* set-locale: sets the default locale
+* ssh-config: sets configuration for sshd, e.g. only allow login via certificates, disable root-login
+* sudoers: makes sure ansible_user and interactive_user are in the sudoers
+* tmp-nonexec: for hardening purposes, makes the /tmp folder non-executable
+* unpriv-user: makes sure interactive_user is there and sets the ssh-keys for that user (Yubikey)
 
 Requirements
 ------------
