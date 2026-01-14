@@ -21,3 +21,38 @@
     cache_valid_time: 86400
     name: "{{ _common_install_packages }}"
     state: present
+
+- name: Remove packages that are considered insecure
+  ansible.builtin.apt:
+    name: "{{ os_security_packages_list }}"
+    state: absent
+    purge: true
+
+- name: Install modprobe to disable filesystems | os-10
+  ansible.builtin.apt:
+    name: kmod
+    state: present
+
+- name: Check if efi is installed
+  ansible.builtin.stat:
+    path: /sys/firmware/efi
+  register: efi_installed
+
+- name: Remove vfat from fs-list if efi is used
+  ansible.builtin.set_fact:
+    os_unused_filesystems: "{{ os_unused_filesystems | difference('vfat') }}"
+  when:
+    - efi_installed.stat.isdir is defined
+    - efi_installed.stat.isdir
+
+- name: Remove used filesystems from fs-list
+  ansible.builtin.set_fact:
+    os_unused_filesystems: "{{ os_unused_filesystems | difference(ansible_mounts | map(attribute='fstype') | list) }}"
+
+- name: Disable unused filesystems | os-10
+  ansible.builtin.template:
+    src: etc/modprobe.d/unused-fs.conf.j2
+    dest: /etc/modprobe.d/unused-fs.conf
+    owner: root
+    group: root
+    mode: "0644"
