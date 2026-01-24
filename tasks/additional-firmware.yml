@@ -26,7 +26,7 @@
       - firmware-iwlwifi
       - firmware-sof-signed
     state: present
-  when: "'proxmox_servers' not in group_names"
+  when: "'proxmox_servers' not in group_names and 'proxmox_nodes' not in group_names"
 
 - name: Inform user of the intention with the microcode package
   ansible.builtin.debug:
