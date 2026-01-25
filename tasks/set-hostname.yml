@@ -11,10 +11,12 @@
   vars:
     ansible_remote_tmp: /tmp # Prevent warnings for auto-created tmp dir
 
+# Andre fix 2026: if from a VM-clone, inventory_hostname will be different,
+# so the regexp should focus on the IP-address
 - name: Ensure at least one full hostname entry is present
   ansible.builtin.lineinfile:
     path: /etc/hosts
-    regexp: "{{ ansible_host }}.*{{ inventory_hostname }}"
+    regexp: "^{{ ansible_host }}"
     line: "{{ ansible_host }} {{ inventory_hostname }}"
     state: present
   vars:
