@@ -6,7 +6,7 @@
 # line: 'GRUB_CMDLINE_LINUX_DEFAULT="quiet"'
     line: 'GRUB_CMDLINE_LINUX_DEFAULT="quiet nouveau.modeset=0"'
   register: grubfix
-  when: "'ThinkPad' in ansible_local['cpu_info']['productname']"
+  when: "'ThinkPad' in ansible_facts['ansible_local']['cpu_info']['productname']"
 
 - name: Update grub # noqa: no-handler
   ansible.builtin.command: update-grub
@@ -31,10 +31,10 @@
 - name: Inform user of the intention with the microcode package
   ansible.builtin.debug:
     msg: "This is an Intel system, but it is a libreboot system. Removing intel-microcode package."
-  when: "'GenuineIntel' in ansible_facts['processor'] and 'installed' in ansible_local['cpu_info']['libreboot']"
+  when: "'GenuineIntel' in ansible_facts['processor'] and 'installed' in ansible_facts['ansible_local']['cpu_info']['libreboot']"
 
 - name: Block for actions that need to be done when libreboot present
-  when: "'GenuineIntel' in ansible_facts['processor'] and 'installed' in ansible_local['cpu_info']['libreboot']"
+  when: "'GenuineIntel' in ansible_facts['processor'] and 'installed' in ansible_facts['ansible_local']['cpu_info']['libreboot']"
   block:
     - name: Remove intel-microcode on Intel libreboot systems
       ansible.builtin.apt:
@@ -63,4 +63,4 @@
   ansible.builtin.apt:
     name: intel-microcode
     state: present
-  when: "'GenuineIntel' in ansible_facts['processor'] and 'installed' not in ansible_local['cpu_info']['libreboot']"
+  when: "'GenuineIntel' in ansible_facts['processor'] and 'installed' not in ansible_facts['ansible_local']['cpu_info']['libreboot']"

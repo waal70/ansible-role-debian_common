@@ -31,8 +31,8 @@
       ansible.builtin.template:
         src: "{{ item.src }}"
         dest: "/etc/update-motd.d/{{ item.path }}"
-        owner: "{{ ansible_user_id }}"
-        group: "{{ ansible_user_id }}"
+        owner: "{{ ansible_facts['user_id'] }}"
+        group: "{{ ansible_facts['user_id'] }}"
         mode: "0777"
       with_community.general.filetree:
         - templates/etc/update-motd.d/
