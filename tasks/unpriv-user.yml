@@ -10,29 +10,24 @@
     skeleton: /etc/skel
     append: true
 
+# Andre February 2026: The SSH keys should be batch-added
+# so I am querying all public keys containing 'yubi' and batch adding them
 # private_repo is set in group_vars/all.yml
 - name: Check the primary key for the unprivileged user
   ansible.posix.authorized_key:
     user: "{{ interactive_user }}"
-    key: "{{ lookup('file', private_repo ~ '/ssh-keys/' ~ interactive_user ~ '/' ~ interactive_user ~ '-yubi-1.pub') }}"
+    key: "{% for key in query('fileglob', private_repo ~ '/ssh-keys/' ~ interactive_user ~ '/' ~ interactive_user ~ '-yubi-*.pub') %}{{ lookup('file', key) ~ '\n'}}{% endfor %}" # noqa: yaml[line-length]
     state: present
     exclusive: false
   register: setkey
 
-- name: Re-set the primary key as exclusive, if we found that the key was not present yet # noqa: no-handler
+- name: Re-set the keys as exclusive, if we found that (one of) the keys was/were not present yet # noqa: no-handler
   when: setkey.changed
   ansible.posix.authorized_key:
     user: "{{ interactive_user }}"
-    key: "{{ lookup('file', private_repo ~ '/ssh-keys/' ~ interactive_user ~ '/' ~ interactive_user ~ '-yubi-1.pub') }}"
+    key: "{% for key in query('fileglob', private_repo ~ '/ssh-keys/' ~ interactive_user ~ '/' ~ interactive_user ~ '-yubi-*.pub') %}{{ lookup('file', key) ~ '\n'}}{% endfor %}" # noqa: yaml[line-length]
     state: present
     exclusive: true
-
-- name: Set the secondary key for the unprivileged user
-  ansible.posix.authorized_key:
-    user: "{{ interactive_user }}"
-    key: "{{ lookup('file', private_repo ~ '/ssh-keys/' ~ interactive_user ~ '/' ~ interactive_user ~ '-yubi-2.pub') }}"
-    state: present
-    exclusive: false
 
 - name: Install required package to become unprivileged users
   ansible.builtin.apt:
