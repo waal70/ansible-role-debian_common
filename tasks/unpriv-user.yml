@@ -33,3 +33,11 @@
   ansible.builtin.apt:
     name: acl
     state: present
+
+- name: Remove the entire authorized_keys file for the ansible user, as this was for bootstrapping only
+  ansible.builtin.file:
+    path: "/home/{{ ansible_user | default('ansible') }}/.ssh/authorized_keys"
+    state: absent
+  become: true
+  become_user: "{{ ansible_user | default('ansible') }}"
+  when: ansible_user is defined
