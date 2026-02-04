@@ -1,8 +1,8 @@
 ---
 - name: Transfer the CA key to be trusted to the machine
   ansible.builtin.copy:
-    src: "{{ private_repo ~ '/ssh-keys/ca/ca-ed25519.pub' }}"
-    dest: "/etc/ssh/ca-ed25519.pub"
+    src: "{{ private_repo ~ '/ssh-keys/ca/ca-combi.pub' }}"
+    dest: "/etc/ssh/ca-combi.pub"
     owner: "root"
     group: "root"
     mode: "0644"
@@ -20,5 +20,5 @@
     - { regexp: "^#?PasswordAuthentication", line: "PasswordAuthentication no" }
     - { regexp: "^#?KbdInteractiveAuthentication", line: "KbdInteractiveAuthentication no" }
     - { regexp: "^#?UsePAM", line: "UsePAM yes" } # If no, ansible (passwordless) will not be able to perform SSH
-    - { regexp: "^#?TrustedUserCAKeys", line: "TrustedUserCAKeys /etc/ssh/ca-ed25519.pub" }
+    - { regexp: "^#?TrustedUserCAKeys", line: "TrustedUserCAKeys /etc/ssh/ca-combi.pub" }
   notify: Restart sshd
