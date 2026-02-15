@@ -6,19 +6,18 @@
       - python3-requests
       - sudo
 
-- name: Update all packages if needed
+- name: Ensure package manager is updated and ready
   ansible.builtin.apt:
     update_cache: true
     cache_valid_time: 86400
     upgrade: full
     autoclean: true
     autoremove: true
+    purge: true
   timeout: 600 # on slow raspberries, updating may take a long time
 
 - name: Install pre-requisite packages
   ansible.builtin.apt:
-    update_cache: true
-    cache_valid_time: 86400
     name: "{{ _common_install_packages }}"
     state: present
 

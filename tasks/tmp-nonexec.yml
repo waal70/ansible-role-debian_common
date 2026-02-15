@@ -28,7 +28,7 @@
       ansible.builtin.command:
         cmd: mv /tmp /old_tmp
       failed_when: sttmp.stat.exists
-      changed_when: true
+      changed_when: not sttmp.stat.exists
 
     - name: Make the new file a permanent mount in fstab
       ansible.posix.mount:
@@ -42,7 +42,7 @@
       ansible.builtin.command:
         cmd: mv /old_tmp/* /tmp/
       failed_when: sttmp.stat.exists
-      changed_when: true
+      changed_when: not sttmp.stat.exists
 
     - name: Ensure no more /old_tmp
       ansible.builtin.file:
