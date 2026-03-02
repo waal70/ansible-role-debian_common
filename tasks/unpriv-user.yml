@@ -40,4 +40,6 @@
     state: absent
   become: true
   become_user: "{{ ansible_user | default('ansible') }}"
-  when: ansible_user is defined
+  when:
+    - ansible_user is defined
+    - use_signed_keys

@@ -4,6 +4,12 @@
 # [WARNING]: Module remote_tmp /root/.ansible/tmp did not exist and was created with a mode of 0700,
 # this may cause issues when running as another user. To avoid this, create the remote_tmp dir with the correct permissions manually"
 allow_world_readable_tmpfiles: true
+
+# This flag determines whether you wish to use signed SSH-keys.
+# If set to true, ansible will remove authorized_keys file (because it will trust a CA)
+# If set to false, ansible will not touch the authorized_keys file (default behaviour).
+# This should be set in the group_vars all.yml
+use_signed_keys: false
 os_security_packages_list: [xinetd, inetd, ypserv, telnet-server, rsh-server, prelink]
 os_filesystem_whitelist: []
 os_unused_filesystems:
