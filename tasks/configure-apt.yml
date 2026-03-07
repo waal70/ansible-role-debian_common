@@ -1,0 +1,55 @@
+---
+- name: Ensure the apt-keyring-gpg is present before referring to it in subsequent tasks
+  ansible.builtin.apt:
+    name: debian-archive-keyring
+    state: present
+
+- name: Test the presence of the local mirror
+  ansible.builtin.uri:
+    url: "http://{{ local_apt_mirror }}/dists"
+    method: GET
+    status_code:
+      - 200
+      - 404
+  register: localmirror
+
+- name: Set the target mirror according to the status_code. A 404 means local repo is not up.
+  ansible.builtin.set_fact:
+    target_apt_mirror: "{%if localmirror.status == 200 %}{{ local_apt_mirror }}{%else %}{{ fallback_apt_mirror }}{%endif %}"
+
+- name: Modernize all apt sources to the deb822 format
+  ansible.builtin.shell:
+    cmd: |
+        set -o pipefail
+        echo Y | apt modernize-sources
+  register: modernize_info
+  changed_when: modernize_info.rc != 0
+
+- name: Update the regular apt repo for suite stable and stable-updates
+  ansible.builtin.deb822_repository:
+    name: debian
+    types: deb
+    uris: http://{{ target_apt_mirror }}/
+    suites:
+      - trixie
+      - trixie-updates
+    components:
+      - main
+      - contrib
+      - non-free
+      - non-free-firmware
+    signed_by: /usr/share/keyrings/debian-archive-keyring.gpg
+
+- name: Update the security repo (keep it pointing to the official repo)
+  ansible.builtin.deb822_repository:
+    name: debian-security
+    types: deb
+    uris: http://security.debian.org/debian-security/
+    suites:
+      - trixie-security
+    components:
+      - main
+      - contrib
+      - non-free
+      - non-free-firmware
+    signed_by: /usr/share/keyrings/debian-archive-keyring.gpg
