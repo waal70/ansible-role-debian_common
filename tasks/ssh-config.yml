@@ -6,6 +6,11 @@
     owner: "root"
     group: "root"
     mode: "0644"
+  register: cacopy
+
+- name: Debug cacopy
+  ansible.builtin.debug:
+    var: cacopy
 
 - name: Set the appropriate options in sshd_config file
   ansible.builtin.lineinfile:
@@ -22,3 +27,13 @@
     - { regexp: "^#?UsePAM", line: "UsePAM yes" } # If no, ansible (passwordless) will not be able to perform SSH
     - { regexp: "^#?TrustedUserCAKeys", line: "TrustedUserCAKeys /etc/ssh/ca-combi.pub" }
   notify: Restart sshd
+
+- name: Remove the entire authorized_keys file for the ansible user, now we have hardened SSH
+  ansible.builtin.file:
+    path: "/home/{{ ansible_user | default('ansible') }}/.ssh/authorized_keys"
+    state: absent
+  become: true
+  become_user: "{{ ansible_user | default('ansible') }}"
+  when:
+    - ansible_user is defined
+    - use_signed_keys

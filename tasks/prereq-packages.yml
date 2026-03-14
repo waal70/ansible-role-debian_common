@@ -6,7 +6,29 @@
       - python3-requests
       - sudo
 
-- name: Ensure package manager is updated and ready
+# If we have a newly bootstrapped system, apt update was never run
+# This becomes apparent by inspection of the apt cache folder
+
+- name: Find /var/lib/apt/lists files ending with *Packages
+  ansible.builtin.find:
+    paths: /var/lib/apt/lists
+    patterns: '*Packages'
+  register: apt_result
+
+- name: Ensure package manager is updated and ready on newly installed systems
+  ansible.builtin.apt:
+    update_cache: true
+    upgrade: full
+    autoclean: true
+    autoremove: true
+    purge: true
+  timeout: 600 # on slow raspberries, updating may take a long time
+  when:
+    - not apt_result.failed
+    - apt_result.examined != 0
+    - apt_result.matched == 0
+
+- name: Ensure package manager is updated and ready for regular systems
   ansible.builtin.apt:
     update_cache: true
     cache_valid_time: 86400
