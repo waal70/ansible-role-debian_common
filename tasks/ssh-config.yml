@@ -8,10 +8,6 @@
     mode: "0644"
   register: cacopy
 
-- name: Debug cacopy
-  ansible.builtin.debug:
-    var: cacopy
-
 - name: Set the appropriate options in sshd_config file
   ansible.builtin.lineinfile:
     path: "{{ sshd_config_file }}"
