@@ -17,7 +17,7 @@
 # If the grep matches, it means at least one line had something else than 'freed 0B', i.e. actual values
 # Only in that case, the returncode is 0.
 # If returncode !=0, it simply means no vacuuming took place, so do not consider that an error.
-- name: Vacuum journalctl before
+- name: Vacuum journalctl to a maximum of 10MB
   ansible.builtin.shell:
     cmd: |
       set -o pipefail
