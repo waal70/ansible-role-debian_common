@@ -13,8 +13,15 @@
   vars:
     ansible_remote_tmp: /tmp # Prevent warnings for auto-created tmp dir
 
-# A succesful vacuum does impact log size, but is not considered a change
+# A succesful vacuum impacts log size, report it as a change
+# If the grep matches, it means at least one line had something else than 'freed 0B', i.e. actual values
+# Only in that case, the returncode is 0.
+# If returncode !=0, it simply means no vacuuming took place, so do not consider that an error.
 - name: Vacuum journalctl before
-  ansible.builtin.command: journalctl --vacuum-size=10M
+  ansible.builtin.shell:
+    cmd: |
+      set -o pipefail
+      journalctl --vacuum-size=10M 2>&1 | grep -v 'freed 0B'
   register: vacuumresult
-  changed_when: false
+  changed_when: vacuumresult.rc == 0
+  failed_when: false
