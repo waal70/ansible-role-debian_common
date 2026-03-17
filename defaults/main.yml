@@ -4,7 +4,11 @@
 # [WARNING]: Module remote_tmp /root/.ansible/tmp did not exist and was created with a mode of 0700,
 # this may cause issues when running as another user. To avoid this, create the remote_tmp dir with the correct permissions manually"
 allow_world_readable_tmpfiles: true
-fallback_apt_mirror: "debian.snt.utwente.nl"
+# Override these in your site-wide group_vars/all.yml
+apt_mirror: debian.snt.utwente.nl
+apt_mirror_directory: "/debian"
+apt_mirror_fallback: "mirror.nl.leaseweb.net"
+apt_mirror_fallback_directory: "/debian"
 # This flag determines whether you wish to use signed SSH-keys.
 # If set to true, ansible will remove authorized_keys file (because it will trust a CA)
 # If set to false, ansible will not touch the authorized_keys file (default behaviour).

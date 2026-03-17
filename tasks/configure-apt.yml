@@ -6,7 +6,7 @@
 
 - name: Test the presence of the local mirror
   ansible.builtin.uri:
-    url: "http://{{ local_apt_mirror }}/dists"
+    url: "http://{{ apt_mirror }}/dists"
     method: GET
     status_code:
       - 200
@@ -16,7 +16,7 @@
 
 - name: Set the target mirror according to the status_code. A 404 means local repo is not up.
   ansible.builtin.set_fact:
-    target_apt_mirror: "{%if localmirror.status == 200 %}{{ local_apt_mirror }}{%else %}{{ fallback_apt_mirror }}/debian{%endif %}"
+    target_apt_mirror: "{%if localmirror.status == 200 %}{{ apt_mirror }}{%else %}{{ apt_mirror_fallback }}/debian{%endif %}"
 
 - name: Modernize all apt sources to the deb822 format
   ansible.builtin.shell:
